@@ -1,9 +1,11 @@
 package net.playerwin20.chang_e.registry;
 import net.playerwin20.chang_e.Chang_e;
 import net.playerwin20.chang_e.registry.ModItems;
+import net.playerwin20.chang_e.registry.advanced.block.*;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.NetherPortalBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
@@ -23,29 +25,36 @@ public class ModBlocks{
         .strength(4f)
         .requiresCorrectToolForDrops()
         .sound(SoundType.GLASS)
-        .friction(1f)));
-
+        .friction(1f)
+    ));
     public static final DeferredBlock<Block> ACTIVESPEEDWALK = registerBlock("active_speed_walk", 
         () -> new Block(BlockBehaviour.Properties.of()
         .strength(4f)
         .requiresCorrectToolForDrops()
         .sound(SoundType.GLASS)
-        .friction(0.3f)));
-
+        .friction(0.3f)
+    ));
     public static final DeferredBlock<Block> REGOLITH = registerBlock("regolith", 
-        () -> new Block(BlockBehaviour.Properties.of()
+        () -> new Regolith(BlockBehaviour.Properties.of()
         .strength(0.5f)
-        .sound(SoundType.GRAVEL)));
-
+        .sound(SoundType.GRAVEL)
+    ));
     public static final DeferredBlock<Block> REGOLITH_RACK = registerBlock("regolith_rack", 
         () -> new Block(BlockBehaviour.Properties.of()
         .strength(0.2f)
-        .sound(SoundType.NETHERRACK)));
-
+        .sound(SoundType.NETHERRACK)
+    ));
     public static final DeferredBlock<Block> MERCURY = registerBlock("mercury", 
         () -> new Block(BlockBehaviour.Properties.of()
         .strength(5f)
-        .sound(SoundType.STONE)));
+        .sound(SoundType.STONE)
+    ));
+    public static final DeferredBlock<Block> PORTAL = registerBlock("portal", 
+        () -> new NetherPortalBlock(BlockBehaviour.Properties.of()
+        .strength(-1f)
+        .sound(SoundType.GLASS)
+        .noCollission()
+    ));
     
     //REGISTRARS
 

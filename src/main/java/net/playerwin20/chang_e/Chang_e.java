@@ -3,6 +3,7 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -32,6 +33,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.playerwin20.chang_e.registry.ModBlockEntities;
 import net.playerwin20.chang_e.registry.ModBlocks;
 import net.playerwin20.chang_e.registry.ModItems;
 
@@ -41,12 +43,28 @@ public class Chang_e {
     public static final String MODID = "chang_e"; //examplemod, change back if no work
     public static final Logger LOGGER = LogUtils.getLogger();
 
+    //creative
+    public static final DeferredRegister.Items SHALLOW_ITEMS = DeferredRegister.createItems(MODID);
+    public static final DeferredItem<Item> MASCOT = SHALLOW_ITEMS.registerSimpleItem("placeholder");
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MOD_TAB = CREATIVE_MODE_TABS.register("chang_e_tab", () -> CreativeModeTab.builder()
+        .title(Component.translatable("itemGroup.chang_e"))
+        .withTabsBefore(CreativeModeTabs.COMBAT)
+        .icon(() -> MASCOT.get().getDefaultInstance())
+        .displayItems((parameters, output) -> {
+            output.accept(MASCOT.get());
+        }).build());
+
     public Chang_e(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup); // Register the commonSetup method for modloading
         modEventBus.addListener(this::addCreative);
 
+        SHALLOW_ITEMS.register(modEventBus);
+        CREATIVE_MODE_TABS.register(modEventBus);
+
         ModItems.register(modEventBus); // Register the Deferred Register to the mod event bus so items get registered
         ModBlocks.register(modEventBus); // Register the Deferred Register to the mod event bus so blocks get registered
+        ModBlockEntities.register(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -57,12 +75,10 @@ public class Chang_e {
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if(event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
+        if(event.getTabKey() == MOD_TAB.getKey()) {
             event.accept(ModBlocks.REGOLITH);
-        }
-        
-        if(event.getTabKey() == CreativeModeTabs.REDSTONE_BLOCKS) {
-            event.accept(ModBlocks.SPEEDWALK);
+            event.accept(ModBlocks.REGOLITH_RACK);
+            event.accept(ModBlocks.MERCURY);
         }
     }
 
