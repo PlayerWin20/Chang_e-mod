@@ -1,13 +1,16 @@
 package net.playerwin20.chang_e.registry;
+
 import net.playerwin20.chang_e.Chang_e;
-import net.playerwin20.chang_e.registry.ModItems;
 import net.playerwin20.chang_e.registry.advanced.block.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.NetherPortalBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -17,6 +20,16 @@ import java.util.function.Supplier;;
 
 public class ModBlocks{
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Chang_e.MODID);
+
+    //CONFIGS   does nuh
+
+    private static final BlockBehaviour.StatePredicate REDSTONE_CONDUCT =
+    new BlockBehaviour.StatePredicate() {
+        @Override
+        public boolean test(BlockState state, BlockGetter level, BlockPos pos) {
+            return true;
+        }
+    };
 
     //INSTANCES
 
@@ -54,6 +67,12 @@ public class ModBlocks{
         .strength(-1f)
         .sound(SoundType.GLASS)
         .noCollission()
+    ));
+    public static final DeferredBlock<Block> DEBUG_ENGINE = registerBlock("debug_engine", 
+        () -> new DebugEngine(BlockBehaviour.Properties.of()
+        .strength(4f)
+        .sound(SoundType.METAL)
+        .isRedstoneConductor(REDSTONE_CONDUCT)
     ));
     
     //REGISTRARS
