@@ -1,6 +1,7 @@
 package net.playerwin20.chang_e.registry;
 
 import net.playerwin20.chang_e.Chang_e;
+import net.playerwin20.chang_e.registry.ModItems;
 import net.playerwin20.chang_e.registry.advanced.block.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BlockItem;
@@ -55,11 +56,13 @@ public class ModBlocks{
     public static final DeferredBlock<Block> REGOLITH_RACK = registerBlock("regolith_rack", 
         () -> new Block(BlockBehaviour.Properties.of()
         .strength(0.2f)
+        .requiresCorrectToolForDrops()
         .sound(SoundType.NETHERRACK)
     ));
     public static final DeferredBlock<Block> MERCURY = registerBlock("mercury", 
         () -> new Block(BlockBehaviour.Properties.of()
         .strength(5f)
+        .requiresCorrectToolForDrops()
         .sound(SoundType.STONE)
     ));
     public static final DeferredBlock<Block> PORTAL = registerBlock("portal", 
