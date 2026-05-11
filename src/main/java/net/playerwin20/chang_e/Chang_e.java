@@ -1,13 +1,23 @@
 package net.playerwin20.chang_e;
+import org.joml.Math;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -17,7 +27,9 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BiomeColors;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -27,6 +39,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.playerwin20.chang_e.registry.ModBlockEntities;
 import net.playerwin20.chang_e.registry.ModBlocks;
 import net.playerwin20.chang_e.registry.ModItems;
+import net.playerwin20.chang_e.registry.advanced.block.Regolith;
+import net.playerwin20.chang_e.registry.blockentity.RegolithBlockEntity;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Chang_e.MODID)
@@ -83,6 +97,14 @@ public class Chang_e {
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
+    //private static RandomSource RNG_VISUAL = RandomSource.create();
+    public static int RegolithColorMap(BlockPos pos) {
+        float red = Math.sin(pos.getX()) * Math.sin(pos.getY()) * Math.sin(pos.getX()) + 1;
+        float green = Math.cos(pos.getY()) * Math.cos(pos.getZ()) * Math.cos(pos.getY()) * Math.cos(pos.getX()) * Math.cos(pos.getY()) + 1;
+        float blue = Math.sin(pos.getZ()) * Math.cos(pos.getZ()) + 1;
+        return (int) ((red+green+blue) / 3 * 0xffffff);
+    }
+
     @EventBusSubscriber(modid = Chang_e.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     static class ClientModEvents {
         @SubscribeEvent
@@ -90,6 +112,30 @@ public class Chang_e {
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        }
+
+        @SubscribeEvent
+        public static void onBlockColors(RegisterColorHandlersEvent.Block event) {
+            event.register((state, level, pos, tintIndex) -> {
+                BlockEntity BE = level.getBlockEntity(pos);
+                if (level != null && pos != null && BE != null && BE instanceof RegolithBlockEntity) {
+                    return ((RegolithBlockEntity) BE).getHexColor(); //instead of 0 get the hexcolor tag here
+                }
+                return 0x888888;
+            }, ModBlocks.REGOLITH.get());
+        }
+
+        @SubscribeEvent
+        public static void onItemColors(RegisterColorHandlersEvent.Item event) {
+            event.register((stack, tintIndex) -> {
+                LOGGER.info("held stacks tag contains {}", stack.getTags().count());
+                CustomData data = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+                if (data != null) {
+                    CompoundTag tag = data.copyTag();
+                    return tag.getInt("hex_color");
+                }
+                return 0x888888; // #79746d
+            }, ModBlocks.REGOLITH.get().asItem());
         }
     }
 }

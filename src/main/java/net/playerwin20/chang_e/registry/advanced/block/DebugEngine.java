@@ -67,7 +67,6 @@ public class DebugEngine extends BaseEntityBlock  {
     // behaviour
 
     private static boolean Chang_eOrionPropulsion(BlockPos pos, ServerLevel level) {
-        LOGGER.info("something exploded");
         long cast = pos.asLong();
 
         level.sendParticles(
