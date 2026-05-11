@@ -1,6 +1,52 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#down",
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#east",
+          "tintindex": 0
+        },
+        "north": {
+          "texture": "#north",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#south",
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#up",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#west",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    }
+  ],
   "textures": {
-    "all": "chang_e:block/regolith"
+    "down": "chang_e:block/regolith",
+    "east": "chang_e:block/regolith",
+    "north": "chang_e:block/regolith",
+    "particle": "chang_e:block/regolith",
+    "south": "chang_e:block/regolith",
+    "up": "chang_e:block/regolith",
+    "west": "chang_e:block/regolith"
   }
 }

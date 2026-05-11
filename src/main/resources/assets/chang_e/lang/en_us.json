@@ -1,4 +1,6 @@
 {
+  "chang_e.source.chang_e.lunar": "Lunar",
+
   "block.chang_e.mercury": "Mercury",
   "itemGroup.chang_e": "Chang'e"
 }

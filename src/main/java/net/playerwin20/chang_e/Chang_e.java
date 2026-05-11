@@ -128,7 +128,6 @@ public class Chang_e {
         @SubscribeEvent
         public static void onItemColors(RegisterColorHandlersEvent.Item event) {
             event.register((stack, tintIndex) -> {
-                LOGGER.info("held stacks tag contains {}", stack.getTags().count());
                 CustomData data = stack.get(DataComponents.BLOCK_ENTITY_DATA);
                 if (data != null) {
                     CompoundTag tag = data.copyTag();

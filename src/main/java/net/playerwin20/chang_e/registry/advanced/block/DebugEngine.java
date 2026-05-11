@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -64,6 +65,12 @@ public class DebugEngine extends BaseEntityBlock  {
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
+    @Override
+    public boolean canConnectRedstone(BlockState state, BlockGetter level, BlockPos pos,
+        @org.jetbrains.annotations.Nullable Direction direction) {
+        return true;
+    }
+
     // behaviour
 
     private static boolean Chang_eOrionPropulsion(BlockPos pos, ServerLevel level) {
@@ -88,23 +95,17 @@ public class DebugEngine extends BaseEntityBlock  {
 
     @Override
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-        if (!level.isClientSide && level.hasNeighborSignal(neighborPos)) {
+        if (!level.isClientSide) {
             level.scheduleTick(pos, this, 1);
         }
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if(!level.isClientSide) {
-            level.scheduleTick(pos, this, 1);
-        }
-        return super.useWithoutItem(state, level, pos, player, hitResult);
-    }
-
-    @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        Chang_eOrionPropulsion(pos, level);
+        if(level.hasNeighborSignal(pos)) {
+            Chang_eOrionPropulsion(pos, level);
+        }
         super.tick(state, level, pos, random);
     }
 }

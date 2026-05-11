@@ -50,6 +50,14 @@ public class RegolithBlockEntity extends BlockEntity {
         return this.hex_color;
     }
 
+    public String getSourceName() {
+        return this.source_name;
+    }
+
+    public int[] getComposition() {
+        return this.composition;
+    }
+
     //setup
 
     @Override
