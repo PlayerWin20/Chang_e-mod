@@ -26,9 +26,11 @@ import org.jetbrains.annotations.Nullable;;
 public class ModBlocks{
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Chang_e.MODID);
 
-    //CONFIGS   does nuh
-
-
+    private static enum blockStack {
+        DEFAULT,
+        SOURCE_NAMED, // changes itemstacks name to tag.getString("source_name") locally
+        COMPOUND_CARRIER // anything that drops a regolith block
+    }
 
     //INSTANCES
 
@@ -38,7 +40,7 @@ public class ModBlocks{
         .sound(SoundType.GLASS)
         .friction(1f)
         ),
-        null
+        blockStack.DEFAULT
     );
     public static final DeferredBlock<Block> ACTIVESPEEDWALK = registerBlock("active_speed_walk", 
         () -> new Block(BlockBehaviour.Properties.of()
@@ -46,16 +48,15 @@ public class ModBlocks{
         .sound(SoundType.GLASS)
         .friction(0.3f)
         ),
-        null
+        blockStack.DEFAULT
     );
 
-    private static Supplier<Block> work = () -> new Regolith(BlockBehaviour.Properties.of()
+    public static final DeferredBlock<Block> REGOLITH = registerBlock("regolith", 
+        () -> new Regolith(BlockBehaviour.Properties.of()
             .strength(0.5f)
             .sound(SoundType.GRAVEL)
-        );
-    public static final DeferredBlock<Block> REGOLITH = registerBlock("regolith", 
-        work,
-        null
+        ),
+        blockStack.SOURCE_NAMED
     );
 
     public static final DeferredBlock<Block> REGOLITH_RACK = registerBlock("regolith_rack", 
@@ -64,7 +65,7 @@ public class ModBlocks{
         .requiresCorrectToolForDrops()
         .sound(SoundType.NETHERRACK)
         ),
-        null
+        blockStack.DEFAULT
     );
     public static final DeferredBlock<Block> MERCURY = registerBlock("mercury", 
         () -> new Block(BlockBehaviour.Properties.of()
@@ -72,32 +73,57 @@ public class ModBlocks{
         .requiresCorrectToolForDrops()
         .sound(SoundType.STONE)
         ),
-        null
+        blockStack.DEFAULT
     );
     public static final DeferredBlock<Block> PORTAL = registerBlock("portal", 
         () -> new NetherPortalBlock(BlockBehaviour.Properties.of()
         .strength(-1f)
         .sound(SoundType.GLASS)
         .noCollission()
-        ), null
+        ),
+        blockStack.DEFAULT
     );
     public static final DeferredBlock<Block> DEBUG_ENGINE = registerBlock("debug_engine", 
         () -> new DebugEngine(BlockBehaviour.Properties.of()
         .strength(4f)
         .sound(SoundType.METAL)
-        ), null
+        ), 
+        blockStack.DEFAULT
+    );
+
+    //TODO group allat into one group
+    public static final DeferredBlock<Block> CE_STONE_SURFACE = registerBlock("ce_stone_surface", 
+        () -> new Block(BlockBehaviour.Properties.of()
+        .strength(5f)
+        .sound(SoundType.STONE)
+        ), 
+        blockStack.COMPOUND_CARRIER
+    );
+
+    public static final DeferredBlock<Block> CE_STONE_WALL = registerBlock("ce_stone_wall", 
+        () -> new Block(BlockBehaviour.Properties.of()
+        .strength(5f)
+        .sound(SoundType.STONE)
+        ), 
+        blockStack.COMPOUND_CARRIER
     );
     
     //REGISTRARS
 
-    private static <T extends Block, Q extends BlockItem> DeferredBlock<T> registerBlock(String name, Supplier<T> block, @Nullable BlockItem blockItem) {
+    private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block, @Nullable blockStack blockItemType) {
         DeferredBlock<T> toReturn = BLOCKS.register(name, block);
-        if (blockItem == null) { // DEFAULT!!!
+
+        if (blockItemType == null || blockItemType == blockStack.DEFAULT) {
             ModItems.ITEMS.register(name, () -> new BlockItem(toReturn.get(), new Item.Properties()));
-        } else {
-            ModItems.ITEMS.register(name, () -> blockItem);
         }
-        //registerBlockItem(name, toReturn);
+        if (blockItemType == blockStack.SOURCE_NAMED) {
+            ModItems.ITEMS.register(name, () -> new RegolithBlockItem(toReturn.get(), new Item.Properties()));
+        }
+        if (blockItemType == blockStack.COMPOUND_CARRIER) {
+            ModItems.ITEMS.register(name, () -> new BlockItem(toReturn.get(), new Item.Properties()));
+        }
+
+
         return toReturn;
     }
 

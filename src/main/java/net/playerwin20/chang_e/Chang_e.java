@@ -84,6 +84,8 @@ public class Chang_e {
         if(event.getTabKey() == MOD_TAB.getKey()) {
             event.accept(ModBlocks.REGOLITH);
             event.accept(ModBlocks.REGOLITH_RACK);
+            event.accept(ModBlocks.CE_STONE_SURFACE);
+            event.accept(ModBlocks.CE_STONE_WALL);
             event.accept(ModBlocks.MERCURY);
             event.accept(ModBlocks.DEBUG_ENGINE);
         }

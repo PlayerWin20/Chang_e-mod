@@ -27,6 +27,9 @@ public class CEBlockStateProvider extends BlockStateProvider {
         fastSimpleBlockWithCubeAllItem(ModBlocks.REGOLITH_RACK);
         fastSimpleBlockWithCubeAllItem(ModBlocks.SPEEDWALK);
 
+        fastSimpleBlockWithCubeAllItem(ModBlocks.CE_STONE_SURFACE);
+        fastSimpleBlockWithCubeAllItem(ModBlocks.CE_STONE_WALL);
+
         fastSimpleBlockWithTintCubeAllItem(ModBlocks.REGOLITH);
     }
 
