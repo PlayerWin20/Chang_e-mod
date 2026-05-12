@@ -83,7 +83,7 @@ public class Regolith extends BaseEntityBlock {
     }
 
     @Override
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
+    protected List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         LOGGER.info("i work");
         List<ItemStack> drops = new ArrayList<>();
 
@@ -92,12 +92,17 @@ public class Regolith extends BaseEntityBlock {
         BlockEntity be = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (be instanceof RegolithBlockEntity cast) {
             CompoundTag tag = cast.saveWithFullMetadata(builder.getLevel().registryAccess());
+            tag.remove("x");
+            tag.remove("y");
+            tag.remove("z");
             stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
 
+            /*
             String formatPreRaw = "chang_e.source.chang_e."+tag.getString("source_name");
             stack.set(DataComponents.CUSTOM_NAME,
                 //TranslatableContents("CEpresetSourceName."+tag.getString("source_name"))+" Regolith"    ts no work
                 Component.literal(Component.translatable(formatPreRaw)+" Regolith").withStyle(Style -> Style.withItalic(false)));
+            */
         }
 
         drops.add(stack);
