@@ -35,7 +35,6 @@ public class ModBlocks{
     public static final DeferredBlock<Block> SPEEDWALK = registerBlock("speed_walk",
         () -> new Block(BlockBehaviour.Properties.of()
         .strength(4f)
-        .requiresCorrectToolForDrops()
         .sound(SoundType.GLASS)
         .friction(1f)
         ),
@@ -44,7 +43,6 @@ public class ModBlocks{
     public static final DeferredBlock<Block> ACTIVESPEEDWALK = registerBlock("active_speed_walk", 
         () -> new Block(BlockBehaviour.Properties.of()
         .strength(4f)
-        .requiresCorrectToolForDrops()
         .sound(SoundType.GLASS)
         .friction(0.3f)
         ),
