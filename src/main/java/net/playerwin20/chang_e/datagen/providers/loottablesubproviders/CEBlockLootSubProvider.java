@@ -28,6 +28,7 @@ public class CEBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.REGOLITH_RACK.get());
         dropSelf(ModBlocks.REGOLITH.get());
 
+        add(ModBlocks.DEBUG_ENGINE.get(), noDrop());
         add(ModBlocks.SPEEDWALK.get(), noDrop());
         add(ModBlocks.ACTIVESPEEDWALK.get(), noDrop());
         add(ModBlocks.PORTAL.get(), noDrop());
