@@ -88,6 +88,9 @@ public class Chang_e {
             event.accept(ModBlocks.CE_STONE_WALL);
             event.accept(ModBlocks.MERCURY);
             event.accept(ModBlocks.DEBUG_ENGINE);
+            event.accept(ModBlocks.SILICON_ORE);
+            event.accept(ModItems.SILICON_INGOT);
+            event.accept(ModItems.RAW_SILICON);
         }
     }
 

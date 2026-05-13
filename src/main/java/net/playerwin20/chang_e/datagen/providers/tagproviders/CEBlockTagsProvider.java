@@ -23,7 +23,8 @@ public class CEBlockTagsProvider extends BlockTagsProvider {
     protected void addTags(Provider provider) {
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
             .add(ModBlocks.REGOLITH_RACK.get())
-            .add(ModBlocks.MERCURY.get());
+            .add(ModBlocks.MERCURY.get())
+            .add(ModBlocks.SILICON_ORE.get());
 
         tag(BlockTags.MINEABLE_WITH_SHOVEL)
             .add(ModBlocks.REGOLITH.get());
@@ -31,6 +32,9 @@ public class CEBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.NEEDS_STONE_TOOL)
             .add(ModBlocks.REGOLITH_RACK.get())
             .add(ModBlocks.MERCURY.get());
+
+        tag(BlockTags.NEEDS_IRON_TOOL)
+            .add(ModBlocks.SILICON_ORE.get());
     }
 
     

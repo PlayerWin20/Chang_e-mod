@@ -90,6 +90,13 @@ public class ModBlocks{
         ), 
         blockStack.DEFAULT
     );
+    public static final DeferredBlock<Block> SILICON_ORE = registerBlock("silicon_ore", 
+        () -> new Block(BlockBehaviour.Properties.of()
+        .strength(4f)
+        .sound(SoundType.STONE)
+        ), 
+        blockStack.DEFAULT
+    );
 
     //TODO group allat into one group
     public static final DeferredBlock<Block> CE_STONE_SURFACE = registerBlock("ce_stone_surface", 

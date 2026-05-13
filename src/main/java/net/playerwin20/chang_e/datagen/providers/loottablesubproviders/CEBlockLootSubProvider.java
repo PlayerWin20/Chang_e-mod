@@ -7,6 +7,7 @@ import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
 import net.playerwin20.chang_e.registry.ModBlocks;
+import net.playerwin20.chang_e.registry.ModItems;
 
 public class CEBlockLootSubProvider extends BlockLootSubProvider {
 
@@ -32,5 +33,9 @@ public class CEBlockLootSubProvider extends BlockLootSubProvider {
         add(ModBlocks.SPEEDWALK.get(), noDrop());
         add(ModBlocks.ACTIVESPEEDWALK.get(), noDrop());
         add(ModBlocks.PORTAL.get(), noDrop());
+        add(ModBlocks.CE_STONE_SURFACE.get(), noDrop());
+        add(ModBlocks.CE_STONE_WALL.get(), noDrop());
+
+        dropOther(ModBlocks.SILICON_ORE.get(), ModItems.RAW_SILICON.get());
     }
 }

@@ -15,6 +15,9 @@ public class CEItemModelProvider extends ItemModelProvider{
     @Override
     protected void registerModels() {
         basicItem(ModItems.DEBUG.get());
+
+        basicItem(ModItems.RAW_SILICON.get());
+        basicItem(ModItems.SILICON_INGOT.get());
     }
 
 }
