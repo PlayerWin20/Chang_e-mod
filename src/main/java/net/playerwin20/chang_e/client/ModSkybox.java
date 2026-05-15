@@ -21,6 +21,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.playerwin20.chang_e.Chang_e;
 import net.playerwin20.chang_e.RunTime.CEUniverse;
+import net.playerwin20.chang_e.classes.Cel;
 
 // passed orbit ahh that will supposidly be from server
 
@@ -42,54 +43,77 @@ public class ModSkybox {
 
         Minecraft mc = Minecraft.getInstance();
 
-        if (mc.level == null)
+        if (mc.level == null || !CEUniverse.isBuilt())
             return;
 
-        renderPlanet1(
+        renderPlanet(
             event.getModelViewMatrix(),
             event.getProjectionMatrix(),
             mc.gameRenderer.getMainCamera(),
-            event.getPartialTick().getGameTimeDeltaPartialTick(false)
+            event.getPartialTick().getGameTimeDeltaPartialTick(false),
+
+            35f,
+            10f,
+            0f,
+            20f,
+            BODY
         );
+
+        Cel[] RENDER_PAYLOAD = CEUniverse.getRenderPayload();
+        for (int i = 0; i < RENDER_PAYLOAD.length; i++) {
+            Cel payload = RENDER_PAYLOAD[i];
+            renderPlanet(
+                event.getModelViewMatrix(),
+                event.getProjectionMatrix(),
+                mc.gameRenderer.getMainCamera(),
+                event.getPartialTick().getGameTimeDeltaPartialTick(false),
+
+                payload.DEG_X,
+                payload.DEG_Y,
+                payload.DEG_Z,
+                payload.SIZE,
+                payload.TEXTURE
+            );
+        }
     }
 
-    private static void renderPlanet1(
+    private static void renderPlanet(
         Matrix4f modelViewMatrix,
         Matrix4f projectionMatrix,
         Camera camera,
-        float partialTick
+        float partialTick,
+
+        float angX,
+        float angY,
+        float angZ,
+        float fixedSize,
+        ResourceLocation texture
     ) {
         PoseStack poseStack = new PoseStack();
-
         poseStack.mulPose(modelViewMatrix);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, BODY);
-
         poseStack.pushPose();
 
-        // Orbit rotation
         long time = Minecraft.getInstance().level.getDayTime();
-
         float angle = (time + partialTick) * 0.05f;
 
-        poseStack.mulPose(Axis.YP.rotationDegrees(angle));
-
-        // Sky elevation
-        poseStack.mulPose(Axis.XP.rotationDegrees(35f));
+        poseStack.mulPose(Axis.YP.rotationDegrees(angY * angle));
+        poseStack.mulPose(Axis.XP.rotationDegrees(angX * angle));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(angZ));
 
         // Push away from camera
-        poseStack.translate(0, 0, -100);
+        poseStack.translate(0, 0, -512);
 
         Matrix4f matrix = poseStack.last().pose();
-
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder buffer = tess.begin(
                 VertexFormat.Mode.QUADS,
                 DefaultVertexFormat.POSITION_TEX
         );
 
-        float size = 25f;
+        float size = fixedSize;
 
         buffer.addVertex(matrix, -size, -size, 0).setUv(0, 1);
         buffer.addVertex(matrix, size, -size, 0).setUv(1, 1);

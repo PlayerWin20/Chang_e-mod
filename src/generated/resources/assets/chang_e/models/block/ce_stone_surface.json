@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "parent": "minecraft:block/block",
   "elements": [
     {
@@ -49,10 +48,5 @@
     "south": "chang_e:block/ce_stone_surface",
     "up": "chang_e:block/ce_stone_surface",
     "west": "chang_e:block/ce_stone_surface"
-=======
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "chang_e:block/ce_stone_surface"
->>>>>>> 80a60b7c7e4319f30cff8b52403a60b883f64184
   }
 }

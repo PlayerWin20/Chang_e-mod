@@ -98,7 +98,7 @@ public class Chang_e {
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        //CEUniverse.initialize(event); // sole purpose of it being here is so objects can be added at runtime (but idk about dimensions)
+        CEUniverse.initialize(event); // sole purpose of it being here is so objects can be added at runtime (but idk about dimensions)
     }
 
     private static WorldgenRandom debug_RNG = new WorldgenRandom(new LegacyRandomSource(0));
