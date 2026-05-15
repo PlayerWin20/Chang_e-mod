@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "chang_e:item/plasma",
   "textures": {
     "layer0": "chang_e:item/plasma"
   }

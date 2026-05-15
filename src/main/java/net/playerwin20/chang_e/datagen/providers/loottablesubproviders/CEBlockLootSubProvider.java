@@ -35,6 +35,7 @@ public class CEBlockLootSubProvider extends BlockLootSubProvider {
         add(ModBlocks.PORTAL.get(), noDrop());
         add(ModBlocks.CE_STONE_SURFACE.get(), noDrop());
         add(ModBlocks.CE_STONE_WALL.get(), noDrop());
+        add(ModBlocks.PLASMA.get(), noDrop());
 
         dropOther(ModBlocks.SILICON_ORE.get(), ModItems.RAW_SILICON.get());
     }
