@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.5,
+  "ingredient": {
+    "item": "chang_e:raw_silicon"
+  },
+  "result": {
+    "count": 1,
+    "id": "chang_e:silicon_ingot"
+  }
+}

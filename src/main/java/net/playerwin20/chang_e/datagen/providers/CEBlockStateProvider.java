@@ -30,6 +30,8 @@ public class CEBlockStateProvider extends BlockStateProvider {
         fastSimpleBlockWithTintCubeAllItem(ModBlocks.CE_STONE_SURFACE);
         fastSimpleBlockWithTintCubeAllItem(ModBlocks.CE_STONE_WALL);
 
+        fastSimpleBlockWithCubeAllItem(ModBlocks.SILICON_ORE);
+
         fastSimpleBlockWithTintCubeAllItem(ModBlocks.REGOLITH);
     }
 
