@@ -7,7 +7,7 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.playerwin20.chang_e.Chang_e;
-import net.playerwin20.chang_e.registry.effect.*;
+import net.playerwin20.chang_e.registry.mobeffect.*;
 
 public class ModEffects {
     public static final DeferredRegister<MobEffect> MOB_EFFECTS =

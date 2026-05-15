@@ -1,4 +1,4 @@
-package net.playerwin20.chang_e.registry.effect;
+package net.playerwin20.chang_e.registry.mobeffect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;

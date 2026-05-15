@@ -9,6 +9,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.NetherPortalBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -29,7 +30,8 @@ public class ModBlocks{
     private static enum blockStack {
         DEFAULT,
         SOURCE_NAMED, // changes itemstacks name to tag.getString("source_name") locally
-        COMPOUND_CARRIER // anything that drops a regolith block
+        COMPOUND_CARRIER, // anything that drops a regolith block
+        IGNITER // fent and steel
     }
 
     //INSTANCES
@@ -107,6 +109,15 @@ public class ModBlocks{
         ), 
         blockStack.COMPOUND_CARRIER
     );
+
+    //not that
+    public static final DeferredBlock<Block> PLASMA = registerBlock("plasma",
+        () -> new Plasma(BlockBehaviour.Properties.of()
+        .noCollission()
+        .sound(SoundType.ANVIL)
+        ),
+        blockStack.IGNITER
+    );
     
     //REGISTRARS
 
@@ -122,7 +133,9 @@ public class ModBlocks{
         if (blockItemType == blockStack.COMPOUND_CARRIER) {
             ModItems.ITEMS.register(name, () -> new BlockItem(toReturn.get(), new Item.Properties()));
         }
-
+        if (blockItemType == blockStack.IGNITER) {
+            ModItems.ITEMS.register(name, () -> new PlasmaBlockItem(toReturn.get(), new Item.Properties()));
+        }
 
         return toReturn;
     }

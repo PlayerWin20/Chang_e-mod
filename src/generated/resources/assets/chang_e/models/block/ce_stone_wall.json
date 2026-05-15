@@ -1,0 +1,52 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#down",
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#east",
+          "tintindex": 0
+        },
+        "north": {
+          "texture": "#north",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#south",
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#up",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#west",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    }
+  ],
+  "textures": {
+    "down": "chang_e:block/ce_stone_wall",
+    "east": "chang_e:block/ce_stone_wall",
+    "north": "chang_e:block/ce_stone_wall",
+    "particle": "chang_e:block/ce_stone_wall",
+    "south": "chang_e:block/ce_stone_wall",
+    "up": "chang_e:block/ce_stone_wall",
+    "west": "chang_e:block/ce_stone_wall"
+  }
+}

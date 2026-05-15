@@ -1,23 +1,30 @@
 package net.playerwin20.chang_e;
-import org.joml.Math;
+
+import net.playerwin20.chang_e.RunTime.CEUniverse;
+import net.playerwin20.chang_e.registry.ModBlockEntities;
+import net.playerwin20.chang_e.registry.ModBlocks;
+import net.playerwin20.chang_e.registry.ModItems;
+import net.playerwin20.chang_e.registry.blockentity.*;
+
+import java.util.List;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
-
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
+import net.minecraft.world.level.levelgen.synth.PerlinNoise;
+import net.minecraft.client.Minecraft;
+
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -26,8 +33,6 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BiomeColors;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -36,11 +41,6 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.playerwin20.chang_e.registry.ModBlockEntities;
-import net.playerwin20.chang_e.registry.ModBlocks;
-import net.playerwin20.chang_e.registry.ModItems;
-import net.playerwin20.chang_e.registry.advanced.block.Regolith;
-import net.playerwin20.chang_e.registry.blockentity.RegolithBlockEntity;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Chang_e.MODID)
@@ -67,8 +67,8 @@ public class Chang_e {
         SHALLOW_ITEMS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
 
-        ModItems.register(modEventBus); // Register the Deferred Register to the mod event bus so items get registered
-        ModBlocks.register(modEventBus); // Register the Deferred Register to the mod event bus so blocks get registered
+        ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         //ModEffects.register(modEventBus);
 
@@ -88,23 +88,27 @@ public class Chang_e {
             event.accept(ModBlocks.CE_STONE_WALL);
             event.accept(ModBlocks.MERCURY);
             event.accept(ModBlocks.DEBUG_ENGINE);
+            event.accept(ModBlocks.PLASMA.asItem());
         }
     }
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
+        //CEUniverse.initialize(event); // sole purpose of it being here is so objects can be added at runtime (but idk about dimensions)
     }
 
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    //private static RandomSource RNG_VISUAL = RandomSource.create();
-    public static int RegolithColorMap(BlockPos pos) {
-        float red = Math.sin(pos.getX()) * Math.sin(pos.getY()) * Math.sin(pos.getX()) + 1;
-        float green = Math.cos(pos.getY()) * Math.cos(pos.getZ()) * Math.cos(pos.getY()) * Math.cos(pos.getX()) * Math.cos(pos.getY()) + 1;
-        float blue = Math.sin(pos.getZ()) * Math.cos(pos.getZ()) + 1;
-        return (int) ((red+green+blue) / 3 * 0xffffff);
+    private static WorldgenRandom debug_RNG = new WorldgenRandom(new LegacyRandomSource(0));
+    private static PerlinNoise debug_RED = PerlinNoise.create(debug_RNG, List.of(5));
+    private static PerlinNoise debug_GRN = PerlinNoise.create(debug_RNG, List.of(11));
+    private static PerlinNoise debug_BLU = PerlinNoise.create(debug_RNG, List.of(17));
+
+    public static int DebugColorMap(BlockPos pos) {
+        double r = debug_RED.getValue(pos.getX(), pos.getY(), pos.getZ());
+        double g = debug_GRN.getValue(pos.getX(), pos.getY(), pos.getZ());
+        double b = debug_BLU.getValue(pos.getX(), pos.getY(), pos.getZ());
+        double noise = (r+1)/2*(g+1)/2*(b+1)/2;
+
+        return (int) (noise * 0xffffff);
     }
 
     @EventBusSubscriber(modid = Chang_e.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -119,9 +123,14 @@ public class Chang_e {
         @SubscribeEvent
         public static void onBlockColors(RegisterColorHandlersEvent.Block event) {
             event.register((state, level, pos, tintIndex) -> {
-                BlockEntity BE = level.getBlockEntity(pos);
-                if (level != null && pos != null && BE != null && BE instanceof RegolithBlockEntity) {
-                    return ((RegolithBlockEntity) BE).getHexColor(); //instead of 0 get the hexcolor tag here
+                if (level != null && pos != null) {
+                    BlockEntity BE = level.getBlockEntity(pos);
+                    if (BE != null && BE instanceof RegolithBlockEntity) {
+                        return ((RegolithBlockEntity) BE).getHexColor(); //instead of 0 get the hexcolor tag here
+                    }
+                    else {
+                        return DebugColorMap(pos);
+                    }
                 }
                 return 0x888888;
             }, ModBlocks.REGOLITH.get());
@@ -139,4 +148,6 @@ public class Chang_e {
             }, ModBlocks.REGOLITH.get().asItem());
         }
     }
+
+
 }
