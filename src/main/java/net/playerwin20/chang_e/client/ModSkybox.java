@@ -1,6 +1,7 @@
 package net.playerwin20.chang_e.client;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -21,7 +22,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.playerwin20.chang_e.Chang_e;
 import net.playerwin20.chang_e.RunTime.CEUniverse;
-import net.playerwin20.chang_e.classes.Cel;
+import net.playerwin20.chang_e.classes.Orbit;
 
 // passed orbit ahh that will supposidly be from server
 
@@ -34,6 +35,7 @@ public class ModSkybox {
     );
 
     //private static final Cel[] RENDER_PAYLOAD = CEUniverse.getRenderPayload();
+    private static final float BODY_DIST_OFFSET = 256f;
 
     @SubscribeEvent
     public static void renderSky(RenderLevelStageEvent event) {
@@ -55,10 +57,11 @@ public class ModSkybox {
             35f,
             10f,
             0f,
-            20f,
+            8f,
             BODY
         );
 
+        /*
         Cel[] RENDER_PAYLOAD = CEUniverse.getRenderPayload();
         for (int i = 0; i < RENDER_PAYLOAD.length; i++) {
             Cel payload = RENDER_PAYLOAD[i];
@@ -75,6 +78,7 @@ public class ModSkybox {
                 payload.TEXTURE
             );
         }
+        */
     }
 
     private static void renderPlanet(
@@ -97,6 +101,8 @@ public class ModSkybox {
         poseStack.pushPose();
 
         long time = Minecraft.getInstance().level.getDayTime();
+        
+        /*
         float angle = (time + partialTick) * 0.05f;
 
         poseStack.mulPose(Axis.YP.rotationDegrees(angY * angle));
@@ -105,6 +111,27 @@ public class ModSkybox {
 
         // Push away from camera
         poseStack.translate(0, 0, -512);
+        */
+
+        Orbit orbit = new Orbit(
+            null,
+            new Vector3f(67,-41,79),
+            0.9f
+        );
+        Vector3f pos = orbit.localPosition((time + partialTick) * 0.025f);
+        poseStack.translate(
+            pos.x/pos.length()*BODY_DIST_OFFSET,
+            pos.y/pos.length()*BODY_DIST_OFFSET,
+            pos.z/pos.length()*BODY_DIST_OFFSET);
+
+        // direction to origin (thank you georgdroyd copilot)
+        float yaw = (float) Math.toDegrees(Math.atan2(-pos.x, -pos.z));
+        float pitch =
+            (float) Math.toDegrees(
+                Math.atan2(pos.y, Math.sqrt(pos.x * pos.x + pos.z * pos.z))
+            );
+        poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
+        poseStack.mulPose(Axis.XP.rotationDegrees(pitch));
 
         Matrix4f matrix = poseStack.last().pose();
         Tesselator tess = Tesselator.getInstance();
@@ -113,7 +140,7 @@ public class ModSkybox {
                 DefaultVertexFormat.POSITION_TEX
         );
 
-        float size = fixedSize;
+        float size = fixedSize * pos.length() * 0.5f; //depth
 
         buffer.addVertex(matrix, -size, -size, 0).setUv(0, 1);
         buffer.addVertex(matrix, size, -size, 0).setUv(1, 1);

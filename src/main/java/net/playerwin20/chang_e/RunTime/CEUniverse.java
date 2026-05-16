@@ -15,7 +15,7 @@ public class CEUniverse {
     private static final ResourceLocation BODY =
     ResourceLocation.fromNamespaceAndPath(
         Chang_e.MODID,
-        "textures/skybox/debug.png"
+        "textures/skybox/v15.png"
     );
 
     private static boolean built = false;

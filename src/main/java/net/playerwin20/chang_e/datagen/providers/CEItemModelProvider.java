@@ -4,7 +4,6 @@ import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.playerwin20.chang_e.Chang_e;
-import net.playerwin20.chang_e.registry.ModBlocks;
 import net.playerwin20.chang_e.registry.ModItems;
 
 public class CEItemModelProvider extends ItemModelProvider{
@@ -16,7 +15,6 @@ public class CEItemModelProvider extends ItemModelProvider{
     @Override
     protected void registerModels() {
         basicItem(ModItems.DEBUG.get());
-
         basicItem(ModItems.RAW_SILICON.get());
         basicItem(ModItems.SILICON_INGOT.get());
     }
