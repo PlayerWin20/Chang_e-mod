@@ -22,6 +22,8 @@ public class CEBlockStateProvider extends BlockStateProvider {
             models().cubeAll("active_speed_walk", modLoc("block/speed_walk")));
         simpleBlockItem(ModBlocks.ACTIVESPEEDWALK.get(),
             models().cubeAll("active_speed_walk", modLoc("block/speed_walk")));
+
+        simpleBlockItem(ModBlocks.PLASMA.get(), itemModels().basicItem(modLoc("plasma")));
         
         fastSimpleBlockWithCubeAllItem(ModBlocks.MERCURY);
         fastSimpleBlockWithCubeAllItem(ModBlocks.REGOLITH_RACK);
