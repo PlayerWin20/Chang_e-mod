@@ -1,0 +1,7 @@
+jiggle physics = yes
+graphics = 10000
+lag = no
+fps = fast
+mods = scatmod
+
+1:1 solar system overworld: 200187 [blocks^2] // area containing average 2b2t base expanse so its fine

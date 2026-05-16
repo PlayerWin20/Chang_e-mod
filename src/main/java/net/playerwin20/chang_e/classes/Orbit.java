@@ -1,56 +1,82 @@
 package net.playerwin20.chang_e.classes;
 
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
+import org.joml.Vector3d;
 
-public class Orbit {
-    float ECC;
-    public Vector3f LOC_PE, LOC_AP;
-    public Cel BODY;
+public class Orbit { 
+    public float A, E, I, O, W, V;
+    public Vector3d REFERENCE;
+    public OrbitTransition[] TRANSITION;
 
-    public Orbit(@Nullable Cel parentBody, Vector3f localApoapsis, float eccentricity) {
-        float xAp = localApoapsis.x;
-        float yAp = localApoapsis.y;
-        float zAp = localApoapsis.z;
-
-        float lAp = localApoapsis.length();
-        float rPe = -(lAp*eccentricity-lAp) / (1 + eccentricity);
-
-        this.ECC = eccentricity;
-        this.LOC_PE = new Vector3f(xAp/lAp*rPe, yAp/lAp*rPe, zAp/lAp*rPe); // periapsis = |apoapsis| * periapsis_radius (from eccentricity)
-        this.LOC_AP = localApoapsis;
-        this.BODY = parentBody;
+    private class OrbitTransition {
+        public Orbit targetOrbit;
+        public float transitionTime;
     }
 
-    public Vector3f localPosition(float t) {
-        float ra = LOC_AP.length();
-        float rp = LOC_PE.length();
-        float a = (ra + rp) * 0.5f;
-        float e = ECC;
-        float theta = t;
-
-        float r = (a * (1 - e * e)) / (1 + e * (float)Math.cos(theta));
-
-        Vector3f peDir = LOC_PE.normalize(new Vector3f());
-
-        Vector3f basis = Math.abs(peDir.y) > 0.9f
-            ? new Vector3f(1, 0, 0)
-            : new Vector3f(0, 1, 0);
-
-        Vector3f sideDir = peDir.cross(basis, new Vector3f()).normalize();
-
-        float cos = (float)Math.cos(theta);
-        float sin = (float)Math.sin(theta);
-
-        return new Vector3f(peDir).mul(r * cos)
-            .add(new Vector3f(sideDir).mul(r * sin));
+    public Orbit(
+        float semiMajorAxis,
+        float eccentricity,
+        float inclination,
+        float longitudeOfAscendingNode,
+        float argumentOfPeriapsis,
+        float meanAnomaly,
+        @Nullable Vector3d reference,
+        @Nullable OrbitTransition[] transition
+    )
+    {
+        this.A = semiMajorAxis;
+        this.E = eccentricity;
+        this.I = inclination;
+        this.O = longitudeOfAscendingNode;
+        this.W = argumentOfPeriapsis;
+        this.V = meanAnomaly;
+        this.REFERENCE = reference;
+        this.TRANSITION = transition;
     }
 
-    public float averageRadius() {
-        return (LOC_AP.length() + LOC_PE.length()) * 0.5f;
+    private static final float SECONDS_PER_YEAR = 365.25f * 24f * 3600f;
+
+    public Vector3d getPosition(float deltaT) {
+        // A is expressed in astronomical units (AU).
+        // deltaT is expected in seconds, so convert to years for Gaussian orbital units.
+        float deltaTYears = deltaT / SECONDS_PER_YEAR;
+        float meanMotion = (float) (2.0 * Math.PI / Math.sqrt(A * A * A));
+        float M = V + deltaTYears * meanMotion;
+        float twoPi = (float) (2.0 * Math.PI);
+        M = M % twoPi;
+        if (M < 0) {
+            M += twoPi;
+        }
+
+        float eccentricAnomaly = M;
+        for (int i = 0; i < 20; i++) {
+            float f = eccentricAnomaly - E * (float) Math.sin(eccentricAnomaly) - M;
+            float fPrime = 1 - E * (float) Math.cos(eccentricAnomaly);
+            eccentricAnomaly -= f / fPrime;
+        }
+
+        float x = A * ((float) Math.cos(eccentricAnomaly) - E);
+        float y = A * (float) Math.sqrt(1 - E * E) * (float) Math.sin(eccentricAnomaly);
+
+        // Rotate to 3D space using inclination, longitude of ascending node, and argument of periapsis
+        float cosO = (float) Math.cos(O);
+        float sinO = (float) Math.sin(O);
+        float cosI = (float) Math.cos(I);
+        float sinI = (float) Math.sin(I);
+        float cosW = (float) Math.cos(W);
+        float sinW = (float) Math.sin(W);
+
+        float X = x * (cosO * cosW - sinO * sinW * cosI) - y * (cosO * sinW + sinO * cosW * cosI);
+        float Y = x * (sinO * cosW + cosO * sinW * cosI) + y * (-sinO * sinW + cosO * cosW * cosI);
+        float Z = x * (sinW * sinI) + y * (cosW * sinI);
+
+        return new Vector3d(X, Y, Z);
     }
 
-    public Vector3f localEulerDegrees(Vector3f unitPosition, float t) {
-        return new Vector3f(67, 67, 67);
+    public Vector3d globalPosition(float deltaT) {
+        if(REFERENCE == null) return getPosition(deltaT);
+        else {
+            return new Vector3d(getPosition(deltaT)).add(REFERENCE);
+        }
     }
 }
