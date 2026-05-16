@@ -35,7 +35,7 @@ public class ModSkybox {
     );
 
     //private static final Cel[] RENDER_PAYLOAD = CEUniverse.getRenderPayload();
-    private static final float BODY_DIST_OFFSET = 256f;
+    private static final float BODY_DIST_OFFSET = 100f;
 
     @SubscribeEvent
     public static void renderSky(RenderLevelStageEvent event) {
@@ -115,8 +115,8 @@ public class ModSkybox {
 
         Orbit orbit = new Orbit(
             null,
-            new Vector3f(67,-41,79),
-            0.9f
+            new Vector3f(67,-12,79),
+            0f
         );
         Vector3f pos = orbit.localPosition((time + partialTick) * 0.025f);
         poseStack.translate(
@@ -140,7 +140,7 @@ public class ModSkybox {
                 DefaultVertexFormat.POSITION_TEX
         );
 
-        float size = fixedSize * pos.length() * 0.5f; //depth
+        float size = fixedSize * orbit.averageRadius() / pos.length() * 0.5f; //depth
 
         buffer.addVertex(matrix, -size, -size, 0).setUv(0, 1);
         buffer.addVertex(matrix, size, -size, 0).setUv(1, 1);
